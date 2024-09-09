@@ -1,5 +1,9 @@
 - name: install and run mysql
   hosts: mysql
+  vars:
+    login_user: root
+    password: ExpenseApp@1
+    host: mysql.daws81s.online
   become: yes
   tasks:
   - name: installing mysql s/w
@@ -12,3 +16,14 @@
       name: mysqld
       state: started
       enabled: yes
+
+  - name: connect to mysql
+    community.mysql.mysql_info:
+      login_user: "{{login_user}}"
+      login_password: "{{password}}"
+      login_host: "{{host}}"
+    register: mysql_info
+
+  - name: print mysql info
+    ansible.builtin.debug:
+      msg: "{{mysql_info}}"
