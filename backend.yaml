@@ -1,5 +1,8 @@
 - name: configur backend server i.e nodejs it is like app server
   hosts: backend
+  vars:
+    mysql_root_password: ExpenseApp@1
+    login_host: mysql.venkaty.online
   become: yes
   tasks:
   - name: disable nodejs
@@ -37,3 +40,24 @@
     ansible.builtin.command: npm install
     args:
       chdir: /app
+
+  - name: copy backend services
+    ansible.builtin.copy:
+      src: backend.service
+      dest: /etc/systemd/system/backend.service
+
+  - name: ansible to install pymysql
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      - cryptography
+      executable: pip3.9
+
+  - name: import mysql data
+    community.mysql.mysql_db:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: "{{ login_host }}"
+      target: /app/schema/backend.sql
+      name: all
+      state: import
