@@ -6,6 +6,12 @@
     host: mysql.daws81s.online
   become: yes
   tasks:
+  - name: install pymysql
+    ansible.builtin.pip:
+      name:
+      - PyMySQL
+      executable: pip3.9
+      
   - name: installing mysql s/w
     ansible.builtin.package:
       name: mysql-server
