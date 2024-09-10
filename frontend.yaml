@@ -1,0 +1,44 @@
+- name: configure frontend server i.w for webser
+  hosts: frontend
+  become: yes
+  tasks:
+  - name: install nginx s/w
+    ansible.builtin.package:
+      name: nginx
+      state: present
+  - name: start nginx serve
+    ansible.builtin.service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: remove directory
+    ansible.builtin.file:
+      path: /usr/share/nginx/html/
+      state: absent
+
+  - name: craete user
+    ansible.builtin.file:
+      path: /usr/share/nginx/html/
+      state: directory
+
+  - name: download the content
+    ansible.builtin.get_url:
+      url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+      dest: /tmp/frontend.zip
+  
+  - name: unzip the code
+    ansible.builtin.unarchive:
+      src: /tmp/frontend.zip #by default ansible thinks this is in ansible server
+      dest: /usr/share/nginx/html
+      remote_src: yes
+
+  - name: copy the code 
+    ansible.builtin.copy:
+      src: backend.conf
+      dest: /etc/nginx/default.d/expense.conf
+
+  - name: restrt nginx
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
