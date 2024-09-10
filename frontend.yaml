@@ -33,9 +33,9 @@
       dest: /usr/share/nginx/html
       remote_src: yes
 
-  - name: copy the code 
+  - name: copy expense conf
     ansible.builtin.copy:
-      src: backend.conf
+      src: expense.conf
       dest: /etc/nginx/default.d/expense.conf
 
   - name: restrt nginx
